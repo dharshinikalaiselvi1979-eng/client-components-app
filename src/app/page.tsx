@@ -21,7 +21,7 @@ export default function HomePage() {
             marginBottom: '28px',
           }}
         >
-          Next.js App Router · Lesson 2.18
+          Next.js App Router · Lessons 2.18 & 2.19
         </div>
 
         <h1
@@ -36,10 +36,9 @@ export default function HomePage() {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          Client Component
+          Client Components
           <br />
-          Marking with{' '}
-          <span style={{ fontFamily: 'monospace', fontSize: '48px' }}>&apos;use client&apos;</span>
+          &amp; Interleaving Patterns
         </h1>
 
         <p
@@ -51,35 +50,56 @@ export default function HomePage() {
             margin: '0 auto 36px',
           }}
         >
-          Server Components are the default. Only opt in to Client Components
-          when you need interactivity — hooks, event handlers, or browser APIs.
+          Learn how to selectively opt in to Client Components with the{' '}
+          <code style={{ color: 'var(--accent-2)' }}>&apos;use client&apos;</code> directive (2.18)
+          and feed server-fetched data as props to client boundaries (2.19).
         </p>
 
-        <a
-          href="/products"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '14px 28px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #6366f1, #818cf8)',
-            color: '#fff',
-            fontWeight: 700,
-            fontSize: '15px',
-            boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
-            transition: 'transform 0.2s',
-          }}
-        >
-          View Products Demo →
-        </a>
+        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+          <a
+            href="/products"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '14px 28px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #6366f1, #818cf8)',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: '15px',
+              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)',
+              transition: 'transform 0.2s',
+            }}
+          >
+            🛒 Products (use client)
+          </a>
+          <a
+            href="/todos"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '14px 28px',
+              borderRadius: '10px',
+              background: 'var(--surface-2)',
+              border: '1px solid var(--border)',
+              color: 'var(--text)',
+              fontWeight: 700,
+              fontSize: '15px',
+              transition: 'transform 0.2s',
+            }}
+          >
+            📋 Todos (Interleaving)
+          </a>
+        </div>
       </div>
 
       {/* Rules Grid */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '16px',
           marginBottom: '48px',
         }}
@@ -109,6 +129,19 @@ export default function HomePage() {
               'Ships as JavaScript to the browser',
               'Use for: useState, useEffect, onClick, forms',
               'Keep them small and focused',
+            ],
+          },
+          {
+            icon: '🔄',
+            title: 'Interleaving Patterns',
+            color: '#10b981',
+            borderColor: 'rgba(16,185,129,0.3)',
+            bg: 'rgba(16,185,129,0.08)',
+            points: [
+              'Server fetches data, passes to client',
+              'Client consumes data via props',
+              'No duplicate network fetches',
+              'Props must be serializable (JSON)',
             ],
           },
         ].map((card) => (

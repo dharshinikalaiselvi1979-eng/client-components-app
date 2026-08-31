@@ -1,9 +1,10 @@
 // ✅ SERVER COMPONENT — No 'use client' directive
 // ProductCard renders static product data on the server.
-// It *imports* AddToCartButton (a Client Component) — this is valid!
-// The Server Component tree stops at the <AddToCartButton /> boundary.
+// It *imports* AddToCartButton and ProductModalTrigger (Client Components) — this is valid!
+// The Server Component tree stops at these interactive boundaries.
 
 import AddToCartButton from './AddToCartButton';
+import ProductModalTrigger from './ProductModalTrigger';
 
 interface ProductCardProps {
   product: {
@@ -72,11 +73,21 @@ export default function ProductCard({ product }: ProductCardProps) {
       <hr style={{ border: 'none', borderTop: '1px solid var(--border)' }} />
 
       {/* 
-        ✅ A Server Component CAN use a Client Component as a child.
-        Props (productId, productName) are passed from Server → Client.
-        Only this button ships as JavaScript to the browser.
+        ✅ A Server Component CAN use Client Components as children.
+        Props are passed from Server → Client.
+        Only these button leaf nodes ship as JavaScript to the browser.
       */}
-      <AddToCartButton productId={product.id} productName={product.name} />
+      <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+        <div style={{ flex: 1, position: 'relative' }}>
+          {/* Include ID so our modal trigger can click the cart action */}
+          <div id={`cart-btn-${product.id}`} style={{ display: 'none' }}>
+            <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} />
+          </div>
+          <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} />
+        </div>
+        <ProductModalTrigger product={product} />
+      </div>
     </div>
   );
 }
+

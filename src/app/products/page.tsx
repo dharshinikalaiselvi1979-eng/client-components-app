@@ -1,8 +1,10 @@
 // ✅ SERVER COMPONENT — No 'use client' directive
 // This page is entirely server-rendered.
-// It passes data down to child components as props.
+// It accepts dynamic URL search parameters from Next.js server routing,
+// filters the products list on the server, and passes data to ProductCards.
 
 import ProductCard from '../../components/ProductCard';
+import ProductSearch from '../../components/ProductSearch';
 
 const products = [
   { id: 1, name: 'Laptop', price: 999, emoji: '💻', category: 'Electronics' },
@@ -13,7 +15,28 @@ const products = [
   { id: 6, name: 'Camera', price: 799, emoji: '📷', category: 'Photography' },
 ];
 
-export default function ProductsPage() {
+interface SearchParams {
+  q?: string;
+  category?: string;
+}
+
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams> | SearchParams;
+}) {
+  // Await searchParams to support Next.js 15+ asynchronously, or resolve immediately if already sync
+  const resolvedParams = await searchParams;
+  const q = (resolvedParams.q || '').toLowerCase();
+  const category = resolvedParams.category || 'All';
+
+  // Filter products on the server side
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(q);
+    const matchesCategory = category === 'All' || product.category === category;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 24px' }}>
       {/* Page Header */}
@@ -64,7 +87,7 @@ export default function ProductsPage() {
           >
             &apos;use client&apos;
           </code>{' '}
-          directive. Only the interactive button inside each card is a Client Component.
+          directive. Only the interactive button inside each card and the search input are Client Components.
         </p>
       </div>
 
@@ -82,9 +105,10 @@ export default function ProductsPage() {
         }}
       >
         {[
-          { label: 'ProductsPage', type: 'Server', color: '#6366f1', icon: '🖥️' },
-          { label: 'ProductCard', type: 'Server', color: '#6366f1', icon: '🖥️' },
-          { label: 'AddToCartButton', type: 'Client ← use client', color: '#f59e0b', icon: '⚡' },
+          { label: 'ProductsPage (Server Page)', type: 'Server-rendered', color: '#6366f1', icon: '🖥️' },
+          { label: 'ProductSearch (Client Input)', type: 'Client Component (use client)', color: '#f59e0b', icon: '⚡' },
+          { label: 'ProductCard (Server Container)', type: 'Server-rendered', color: '#6366f1', icon: '🖥️' },
+          { label: 'AddToCartButton (Client Interaction)', type: 'Client Component (use client)', color: '#f59e0b', icon: '⚡' },
         ].map((item) => (
           <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontSize: '20px' }}>{item.icon}</span>
@@ -100,18 +124,50 @@ export default function ProductsPage() {
         ))}
       </div>
 
+      {/* Product Search & Filter UI (Client Component) */}
+      <ProductSearch />
+
       {/* Product Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '20px',
-        }}
-      >
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {filteredProducts.length === 0 ? (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '60px 20px',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius)',
+            color: 'var(--text-muted)',
+          }}
+        >
+          <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>🔍</span>
+          <p style={{ fontSize: '16px', fontWeight: 600 }}>No products found matching your criteria.</p>
+          <a
+            href="/products"
+            style={{
+              display: 'inline-block',
+              marginTop: '16px',
+              color: 'var(--accent-2)',
+              fontSize: '14px',
+              fontWeight: 600,
+              textDecoration: 'underline',
+            }}
+          >
+            Reset Filters
+          </a>
+        </div>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '20px',
+          }}
+        >
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
     </main>
   );
 }
