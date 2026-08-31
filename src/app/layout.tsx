@@ -51,6 +51,7 @@ export default function RootLayout({
                 {[
                   { href: '/', label: 'Home' },
                   { href: '/products', label: 'Products' },
+                  { href: '/todos', label: 'Todos' },
                 ].map((link) => (
                   <a
                     key={link.href}
