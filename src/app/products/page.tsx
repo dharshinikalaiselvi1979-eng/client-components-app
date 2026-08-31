@@ -2,7 +2,7 @@
 // This page is entirely server-rendered.
 // It passes data down to child components as props.
 
-import ProductCard from '@/components/ProductCard';
+import ProductCard from '../../components/ProductCard';
 
 const products = [
   { id: 1, name: 'Laptop', price: 999, emoji: '💻', category: 'Electronics' },
