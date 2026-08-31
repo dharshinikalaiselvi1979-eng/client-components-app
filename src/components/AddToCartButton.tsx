@@ -7,22 +7,27 @@
 //   3. Needs to respond to user interaction in the browser
 
 import { useState } from 'react';
+import { useCart } from './CartContext';
 
 interface AddToCartButtonProps {
   productId: number;
   productName: string;
+  productPrice: number;
 }
 
 export default function AddToCartButton({
   productId,
   productName,
+  productPrice,
 }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
+  const { addToCart } = useCart();
 
   const handleClick = () => {
     setAdded(true);
+    addToCart({ id: productId, name: productName, price: productPrice });
     console.log(`Added ${productName} (id: ${productId}) to cart`);
-    // In a real app, this would call an API route
+    
     setTimeout(() => setAdded(false), 2000);
   };
 
@@ -51,7 +56,8 @@ export default function AddToCartButton({
         transform: added ? 'scale(1.02)' : 'scale(1)',
       }}
     >
-      {added ? '✓ Added to Cart!' : '🛒 Add to Cart'}
+      {added ? '✓ Added!' : '🛒 Add to Cart'}
     </button>
   );
 }
+

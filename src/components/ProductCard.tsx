@@ -76,7 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         Props (productId, productName) are passed from Server → Client.
         Only this button ships as JavaScript to the browser.
       */}
-      <AddToCartButton productId={product.id} productName={product.name} />
+      <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} />
     </div>
   );
 }
